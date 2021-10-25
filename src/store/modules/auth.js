@@ -1,4 +1,7 @@
 import authApi from '@/api/auth.js';
+import {
+    setItem
+} from '@/helpers/persistanceStorage.js';
 
 export default {
     state: {
@@ -6,6 +9,9 @@ export default {
         currentUser: null,
         validationErrors: null,
         isLoggedIn: null
+    },
+    getters: {
+        
     },
     mutations: {
         registerStart(state) {
@@ -29,6 +35,7 @@ export default {
                 context.commit('registerStart');
                 authApi.register(credentials).then((response) => {
                     context.commit('registerSuccess', response.data.user);
+                    setItem('token', response.data.user.token)
                     resolve(response.data.user);
                 }).catch(result => {
                     console.log(result.response.data.errors);

@@ -7,7 +7,7 @@
           <p class="text-xs-center">
             <router-link :to="{ name: 'login' }">Need an account?</router-link>
           </p>
-          validation errors
+          <McvValidationErrors/>
           <form @submit.prevent="onSubmit">
             <fieldset class="form-group">
               <input
@@ -47,8 +47,12 @@
 </template>
 
 <script>
+import McvValidationErrors from '@/components/auth/ValidationErrors.vue';
 export default {
   name: "McvRegister",
+  components: {
+    McvValidationErrors
+  },
   data() {
     return {
       username: "",
