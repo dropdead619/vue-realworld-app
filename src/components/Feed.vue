@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="isLoading">Loading...</div>
-    <div v-if="error">Something bad happened...</div>
+  <McvLoading v-if="isLoading"></McvLoading>
+    <McvErrorMessage v-if="error" />
     <div v-if="feed">
       <div
         class="article-preview"
@@ -33,14 +33,22 @@
           </div>
           <div class="pull-xs-right">ADD TO FAVORITES</div>
         </div>
-        <router-link class="preview-link" :to="{ name: 'article', params: { slug: article.slug } }">
-            <h1> {{ article.title}} </h1>
-            <p> {{ article.description }}</p>
-            <span>Read more...</span>
-            TAG LIST
+        <router-link
+          class="preview-link"
+          :to="{ name: 'article', params: { slug: article.slug } }"
+        >
+          <h1>{{ article.title }}</h1>
+          <p>{{ article.description }}</p>
+          <span>Read more...</span>
+          TAG LIST
         </router-link>
       </div>
-      PAGINATION
+      <McvPagination
+        :total="totalPages"
+        :perPage="perPage"
+        :currentPage="currentPage"
+        :url="baseUrl"
+      />
     </div>
   </div>
 </template>
@@ -48,13 +56,28 @@
 <script>
 import { actionTypes, getterTypes } from "@/store/modules/feed.js";
 import { mapGetters } from "vuex";
+import McvPagination from "@/components/Pagination.vue";
+import McvLoading from "@/components/Loading.vue";
+import McvErrorMessage from "@/components/ErrorMessage.vue";
+import {stringify, parseUrl} from 'query-string';
+
 export default {
   name: "McvFeed",
+  components: {
+    McvPagination,
+    McvLoading,
+    McvErrorMessage
+  },
   props: {
     apiUrl: {
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      perPage: 10,
+    };
   },
   computed: {
     ...mapGetters({
@@ -62,9 +85,38 @@ export default {
       isLoading: getterTypes.isLoading,
       error: getterTypes.error,
     }),
+    totalPages() {
+      return this.feed.articlesCount;
+    },
+    currentPage() {
+      return Number(this.$route.query.page || "1");
+    },
+    baseUrl() {
+      return this.$route.path;
+    },
+    offset() {
+      return this.currentPage * this.perPage - this.perPage;
+    }
+  },
+  watch: {
+    currentPage() {
+      this.fetchFeed();
+    },
+  },
+  methods: {
+    fetchFeed() {
+      const parsedUrl = parseUrl(this.apiUrl);
+      const stringifiedParams = stringify({
+        limit: this.perPage,
+        offset: this.offset,
+        ...parsedUrl.query
+      })
+     const apiUrlWithParams = `${parsedUrl.url}?${stringifiedParams}`;
+      this.$store.dispatch(actionTypes.getFeed, { apiUrl: apiUrlWithParams });
+    },
   },
   mounted() {
-    this.$store.dispatch(actionTypes.getFeed, { apiUrl: this.apiUrl });
+    this.fetchFeed();
   },
 };
 </script>
