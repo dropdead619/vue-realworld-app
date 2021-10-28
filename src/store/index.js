@@ -4,6 +4,8 @@ import auth from '@/store/modules/auth.js';
 import feed from '@/store/modules/feed.js';
 import tags from '@/store/modules/tags.js';
 import article from '@/store/modules/article.js';
+import createArticle from '@/store/modules/createArticle.js';
+import editArticle from '@/store/modules/editArticle.js';
 
 Vue.use(Vuex)
 
@@ -19,6 +21,8 @@ export default new Vuex.Store({
     auth,
     feed,
     tags,
-    article
+    article,
+    createArticle,
+    editArticle
   }
 });

@@ -1,8 +1,9 @@
 <template>
   <div>
-  <McvLoading v-if="isLoading"></McvLoading>
+    <McvLoading v-if="isLoading"></McvLoading>
     <McvErrorMessage v-if="error" />
     <div v-if="feed">
+      <div v-if="feed.articles.length === 0">No articles are here... yet.</div>
       <div
         class="article-preview"
         v-for="(article, index) in feed.articles"
@@ -40,7 +41,7 @@
           <h1>{{ article.title }}</h1>
           <p>{{ article.description }}</p>
           <span>Read more...</span>
-          TAG LIST
+          <McvTagList :tags="article.tagList" />
         </router-link>
       </div>
       <McvPagination
@@ -59,14 +60,16 @@ import { mapGetters } from "vuex";
 import McvPagination from "@/components/Pagination.vue";
 import McvLoading from "@/components/Loading.vue";
 import McvErrorMessage from "@/components/ErrorMessage.vue";
-import {stringify, parseUrl} from 'query-string';
+import McvTagList from "@/components/TagList.vue";
+import { stringify, parseUrl } from "query-string";
 
 export default {
   name: "McvFeed",
   components: {
     McvPagination,
     McvLoading,
-    McvErrorMessage
+    McvErrorMessage,
+    McvTagList
   },
   props: {
     apiUrl: {
@@ -96,7 +99,7 @@ export default {
     },
     offset() {
       return this.currentPage * this.perPage - this.perPage;
-    }
+    },
   },
   watch: {
     currentPage() {
@@ -109,9 +112,9 @@ export default {
       const stringifiedParams = stringify({
         limit: this.perPage,
         offset: this.offset,
-        ...parsedUrl.query
-      })
-     const apiUrlWithParams = `${parsedUrl.url}?${stringifiedParams}`;
+        ...parsedUrl.query,
+      });
+      const apiUrlWithParams = `${parsedUrl.url}?${stringifiedParams}`;
       this.$store.dispatch(actionTypes.getFeed, { apiUrl: apiUrlWithParams });
     },
   },
