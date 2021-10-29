@@ -75,7 +75,6 @@ export default {
         }) {
             return new Promise(resolve => {
                 context.commit(mutationTypes.updateArticleStart);
-                console.log(slug, articleInput);
                 articleApi.updateArticle(slug, articleInput).then((article) => {
                     context.commit(mutationTypes.updateArticleSuccess);
                     resolve(article);

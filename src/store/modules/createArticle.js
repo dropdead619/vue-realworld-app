@@ -44,7 +44,6 @@ export default {
         [actionTypes.createArticle](context, {articleInput}) {
             return new Promise(resolve => {
                 context.commit(mutationTypes.createArticleStart);
-                console.log(articleInput);
                 articleApi.createArticle(articleInput).then(article => {
                     context.commit(mutationTypes.createArticleSuccess, article);
                     resolve(article);

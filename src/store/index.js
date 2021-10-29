@@ -23,6 +23,6 @@ export default new Vuex.Store({
     tags,
     article,
     createArticle,
-    editArticle
+    editArticle,
   }
 });

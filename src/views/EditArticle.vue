@@ -7,7 +7,7 @@
       :isSubmitting="isSubmitting"
       :errors="validationErrors"
       @articleSubmit="onSubmit"
-    />
+    >Edit Article</McvArticleForm>
   </div>
 </template>
 
@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     onSubmit(articleInput) {
-      console.log(this.article);
       const slug = this.$route.params.slug;
       this.$store
         .dispatch(actionTypes.updateArticle, {

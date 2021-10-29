@@ -51,7 +51,6 @@ export default {
             return new Promise(resolve => {
                 context.commit(mutationTypes.getTagsStart);
                 tagsApi.getTags().then(response => {
-                    console.log('TAGS',response);
                     context.commit(mutationTypes.getTagsSuccess, response.data);
                     resolve(response.data);
                 }).catch(() => {

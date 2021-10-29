@@ -43,7 +43,7 @@
                   class="btn btn-lg pull-xs-right btn-primary"
                   :disable="isSubmitting"
                 >
-                  Publish article
+                 <slot></slot>
                 </button>
               </fieldset>
             </fieldset>

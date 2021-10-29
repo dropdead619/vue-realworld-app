@@ -3,8 +3,8 @@
     :initialValues="initialValues"
     :isSubmitting="isSubmitting"
     :errors="validationErrors"
-    @articleSubmit="onSubmit"
-  />
+    @articleSubmit="onSubmit">
+ Publish Article</McvArticleForm>
 </template>
 
 <script>

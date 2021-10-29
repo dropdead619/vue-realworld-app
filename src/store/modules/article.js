@@ -70,7 +70,6 @@ export default {
             return new Promise(resolve => {
                 context.commit(mutationTypes.getArticleStart);
                 articleApi.getArticle(slug).then(article => {
-                    console.log('Article', article);
                     context.commit(mutationTypes.getArticleSuccess, article);
                     resolve(article);
                 }).catch(() => {

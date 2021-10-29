@@ -24,12 +24,17 @@ export const mutationTypes = {
     getCurrentUserStart: '[auth] getCurrentUserStart',
     getCurrentUserSuccess: '[auth] getCurrentUserSuccess',
     getCurrentUserFailure: '[auth] getCurrentUserFailure',
+
+    updateUserSettingsStart: '[auth] updateUserSettingsStart',
+    updateUserSettingsSuccess: '[auth] updateUserSettingsSuccess',
+    updateUserSettingsFailure: '[auth] updateUserSettingsFailure',
 }
 
 export const actionTypes = {
     register: '[auth] register',
     login: '[auth] login',
     getCurrentUser: '[auth] getCurrentUser',
+    updateUserSettings: '[auth] updateUserSettings',
 }
 
 export default {
@@ -102,6 +107,17 @@ export default {
             state.isLoggedIn = false;
             state.currentUser = null;
         },
+        [mutationTypes.updateUserSettingsStart](state) {
+            state.isSubmitting = true;
+        },
+        [mutationTypes.updateUserSettingsSuccess](state) {
+            state.isSubmitting = false;
+        },
+        [mutationTypes.updateUserSettingsFailure](state, payload) {
+            state.isSubmitting = false;
+            state.validationErrors = payload;
+        },
+
     },
     actions: {
         [actionTypes.register](context, credentials) {
@@ -109,10 +125,10 @@ export default {
                 context.commit(mutationTypes.registerStart);
                 authApi.register(credentials).then((response) => {
                     context.commit(mutationTypes.registerSuccess, response.data.user);
+                    console.log(credentials);
                     setItem('token', response.data.user.token)
                     resolve(response.data.user);
                 }).catch(result => {
-                    console.log(result.response.data.errors);
                     context.commit(mutationTypes.registerFailure, result.response.data.errors);
                 });
             });
@@ -122,11 +138,10 @@ export default {
                 context.commit(mutationTypes.loginStart);
                 authApi.login(credentials).then((response) => {
                     context.commit(mutationTypes.loginSuccess, response.data.user);
-                    setItem('token', response.data.user.token)
                     console.log(response);
+                    setItem('token', response.data.user.token)
                     resolve(response.data.user);
                 }).catch(result => {
-                    console.log(result.response.data.errors);
                     context.commit(mutationTypes.loginFailure, result.response.data.errors);
                 });
             });
@@ -136,12 +151,25 @@ export default {
                 context.commit(mutationTypes.getCurrentUserStart);
                 authApi.getCurrentUser().then((response) => {
                     context.commit(mutationTypes.getCurrentUserSuccess, response.data.user);
-                    console.log(response);
                     resolve(response.data.user);
                 }).catch(() => {
                     context.commit(mutationTypes.getCurrentUserFailure);
                 });
             });
-        }
+        },
+        [actionTypes.updateUserSettings](context,
+            userSettings
+        ) {
+            return new Promise(resolve => {
+                context.commit(mutationTypes.updateUserSettingsStart);
+                authApi.updateCurrentUser(userSettings).then(response => {
+                    context.commit(mutationTypes.updateUserSettingsSuccess, response.data);
+                    resolve(response.data);
+                }).catch((errors) => {
+                    console.log(errors);
+                    context.commit(mutationTypes.updateUserSettingsFailure, errors);
+                });
+            })
+        },
     }
 }

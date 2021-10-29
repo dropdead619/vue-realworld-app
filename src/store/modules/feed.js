@@ -51,7 +51,6 @@ export default {
             return new Promise(resolve => {
                 context.commit(mutationTypes.getFeedStart);
                 feedApi.getFeed(apiUrl).then(response => {
-                    console.log('NOW',response);
                     context.commit(mutationTypes.getFeedSuccess, response.data);
                     resolve(response.data);
                 }).catch(() => {
